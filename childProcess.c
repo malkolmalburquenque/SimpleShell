@@ -1,3 +1,9 @@
+/*
+Malkolm Alburquenque
+McGill University
+260562740
+*/
+
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
@@ -43,11 +49,11 @@ int getcmd(char *prompt, char *args[], int *background){
 
 int main (void){
 	char *args[20];
-	int bg;
+	int bg, status;
 
 	while (1) {
 		bg =0;
-		int cnt = getcmd("\n8===natelikespenis===> ", args, &bg);
+		int cnt = getcmd("\n++ ", args, &bg);
 
         /* the steps can be..:
          * (1) fork a child process using fork()
@@ -55,19 +61,55 @@ int main (void){
          * (3) if background is not specified, the parent will wait,
          * otherwise parent starts the next command... */
 
-       int pid = fork();
-        if (pid == 0) {
-            execvp(args[0], args);
-		}
-		else{
-			wait(2);
-			if (bg == 1){
-				waitpid(pid);
-			}
-			else{
-				wait(2);
-				printf("hello i am ur daddy\n");
-			}
-		}
+
+		 int pid = fork();
+		  //not background
+		 if(bg==0){
+			 printf("not background");
+			 if (pid < 0){
+				 perror("PID Error");
+				 exit (EXIT_FAILURE);
+			 }
+			 //parent
+			 if (pid > 0){
+				 waitpid (pid, &status, 0);
+				 if(!WIFEXITED(status)){
+					 perror("Child did not exit");
+					 exit(EXIT_FAILURE);
+				 }
+			 }
+			 //child
+			 else{
+			 	int j = execvp(args[0], args);
+				if (j < 0){
+				 	perror("Error in execvp");
+				 	exit(EXIT_FAILURE);
+				}
+		 }
+		 //is background
+	 	} else{
+		 printf("background" );
+		 int pidbg = fork();
+			 if (pidbg < 0){
+			 	perror("PID Error");
+			 	exit (EXIT_FAILURE);
+			 }
+			 //parent
+			 if (pidbg > 0){
+			 	waitpid (pid, &status, 0);
+			 	if(!WIFEXITED(status)){
+			 		perror("Child did not exit");
+			 		exit(EXIT_FAILURE);
+			 	}
+			 }
+			 //child
+			 else{
+			 	int j = execvp(args[0], args);
+				if (j < 0){
+				 	perror("Error in execvp bg");
+				 	exit(EXIT_FAILURE);
+				}
+			 }
+		 }
 	}
 }
