@@ -1,5 +1,5 @@
 # SimpleShell
-
+---
 A shell implementation coded in C to be ran on a UNIX terminal. 
 ---
 #### Author
