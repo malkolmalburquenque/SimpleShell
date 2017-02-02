@@ -9,6 +9,11 @@ McGill University
 #include <string.h>
 #include <stdlib.h>
 
+
+
+
+
+
 //this method empties args
 void emptyArgs(char *args[]){
 	for (size_t i = 0; i < 20; i++) {
@@ -54,6 +59,9 @@ int main (void){
 	while (1) {
 		bg =0;
 		int cnt = getcmd("\n++ ", args, &bg);
+        if (cnt==0){
+            continue;
+        }
 
         /* the steps can be..:
          * (1) fork a child process using fork()
@@ -65,48 +73,45 @@ int main (void){
 		 int pid = fork();
 		  //not background
 		 if(bg==0){
-			 printf("not background");
 			 if (pid < 0){
-				 perror("PID Error");
+				 perror("NON BG: PID Error\n");
 				 exit (EXIT_FAILURE);
 			 }
 			 //parent
 			 if (pid > 0){
-				 waitpid (pid, &status, 0);
-				 if(!WIFEXITED(status)){
-					 perror("Child did not exit");
+				 //printf("NON BG: Parent\n");
+                 waitpid (pid, &status, 0);
+                 if(!WIFEXITED(status)){
+					 perror("NON BG: Child did not exit\n");
 					 exit(EXIT_FAILURE);
 				 }
 			 }
 			 //child
 			 else{
+                //printf("NON BG: Child\n");
 			 	int j = execvp(args[0], args);
 				if (j < 0){
-				 	perror("Error in execvp");
+				 	perror("NON BG: Error in execvp\n");
 				 	exit(EXIT_FAILURE);
 				}
-		 }
-		 //is background
-	 	} else{
-		 printf("background" );
-		 int pidbg = fork();
-			 if (pidbg < 0){
-			 	perror("PID Error");
+		     }
+	 	}
+        //is background
+        else{
+			 if (pid < 0){
+			 	perror("BG: PID Error\n");
 			 	exit (EXIT_FAILURE);
 			 }
 			 //parent
-			 if (pidbg > 0){
-			 	waitpid (pid, &status, 0);
-			 	if(!WIFEXITED(status)){
-			 		perror("Child did not exit");
-			 		exit(EXIT_FAILURE);
-			 	}
+			 if (pid > 0){
+                //printf("BG: Parent\n");
 			 }
 			 //child
 			 else{
+               // printf("BG: Child\n");
 			 	int j = execvp(args[0], args);
 				if (j < 0){
-				 	perror("Error in execvp bg");
+				 	perror("BG: Error in execvp\n");
 				 	exit(EXIT_FAILURE);
 				}
 			 }
