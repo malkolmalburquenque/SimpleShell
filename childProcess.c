@@ -11,7 +11,23 @@ McGill University
 
 
 
-
+int extraCommands( char* args[]){
+    
+    //check for output redirection
+    if(strcmp(args[1], ">")==0){
+        args[1]=args[2];
+        args[2]=NULL;
+        return 2;
+    }
+    //check for command piping
+    if(strcmp(args[1], "|")==0){
+        args[1]=args[2];
+        args[2]=NULL;
+        return 3;
+    }
+    else
+        return 0;
+}
 
 
 //this method empties args
@@ -48,13 +64,14 @@ int getcmd(char *prompt, char *args[], int *background){
 		if (strlen(token) > 0)
 			args[i++] = token;
 	}
-
+    //need to free memory
+    free(line);
 	return i;
 }
 
 int main (void){
 	char *args[20];
-	int bg, status;
+	int bg, status, extraCmdReturn;
 
 	while (1) {
 		bg =0;
@@ -62,6 +79,39 @@ int main (void){
         if (cnt==0){
             continue;
         }
+        
+         
+    switch(extraCommands(args)){
+        //all other extraCommands not listed below
+        case(1){
+            continue; 
+        }
+        //redirect
+        case(2){
+
+        }
+        //pipe
+        case(3){
+            
+            if(pipe(args)==-1){
+                perror("Error in creating pipe"\n);
+                exit (EXIT_FAILURE);
+            }
+            int pipe_pid=fork();
+                if (pid < 0){
+                    perror("PIPE: PID Error\n");
+                    exit (EXIT_FAILURE);
+                }
+                if (pipe_pid > 0){
+                    
+                }
+
+        }
+        //all input commands not dealt with in extraCommands
+        default;{
+            printf("Standard command issued");
+        }
+            
 
         /* the steps can be..:
          * (1) fork a child process using fork()
