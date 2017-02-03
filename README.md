@@ -1,4 +1,4 @@
-# SimpleShell
+# WORK IN PROGRESS - SimpleShell
 
 
 _A shell implementation coded in C to be ran on a UNIX terminal._ 
